@@ -24,8 +24,28 @@ class MyApp extends StatelessWidget {
   }
 }
 
-class MyHomePage extends StatelessWidget {
+class MyHomePage extends StatefulWidget {
   const MyHomePage({super.key});
+
+  @override
+  State<MyHomePage> createState() => _MyHomePageState();
+}
+
+class _MyHomePageState extends State<MyHomePage>
+    with SingleTickerProviderStateMixin {
+  late TabController _tabController;
+
+  @override
+  void initState() {
+    _tabController = TabController(length: 3, vsync: this);
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    _tabController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -36,26 +56,64 @@ class MyHomePage extends StatelessWidget {
       window.onMetricsChanged!();
     });
 
-    return DefaultTabController(
-      length: 3,
-      child: Scaffold(
-        appBar: AppBar(
-          title: const Text('Tab Demo'),
-          bottom: const TabBar(
-            tabs: [
-              Tab(text: 'Red'),
-              Tab(text: 'Green'),
-              Tab(text: 'Blue'),
-            ],
-          ),
-        ),
-        body: const TabBarView(
-          physics: NeverScrollableScrollPhysics(), // Disable swiping
+    return Scaffold(
+      body: Padding(
+        padding: const EdgeInsets.all(30),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            // Pages with different background colors
-            RedPage(),
-            GreenPage(),
-            BluePage(),
+            Row(
+              children: [
+                Container(
+                  height: 8,
+                  width: 8,
+                  decoration: const BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: Colors.red,
+                  ),
+                ),
+                const SizedBox(width: 10),
+                const Text("Connected"),
+                const SizedBox(width: 5),
+                Container(
+                  height: 4,
+                  width: 4,
+                  decoration: const BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: Colors.grey,
+                  ),
+                ),
+                const SizedBox(width: 5),
+                const Text("example@gmail.com"),
+                const Expanded(child: SizedBox()),
+                FilledButton(
+                    onPressed: () => {}, child: const Text("Disconnect"))
+              ],
+            ),
+            TabBar(
+              controller: _tabController,
+              tabs: const [
+                Tab(text: 'Red'),
+                Tab(text: 'Green'),
+                Tab(
+                    child: Row(
+                  children: [Text("Settings"), Icon(Icons.settings)],
+                )),
+              ],
+            ),
+            Expanded(
+              child: TabBarView(
+                controller: _tabController,
+                physics:
+                    const NeverScrollableScrollPhysics(), // Disable swiping
+                children: [
+                  // Pages with different background colors
+                  RedPage(),
+                  const GreenPage(),
+                  const BluePage(),
+                ],
+              ),
+            ),
           ],
         ),
       ),
@@ -63,12 +121,25 @@ class MyHomePage extends StatelessWidget {
   }
 }
 
-class RedPage extends StatelessWidget {
-  const RedPage({Key? key}) : super(key: key);
+class RedPage extends StatefulWidget {
+  const RedPage({super.key});
+
+  @override
+  State<RedPage> createState() => _RedPageState();
+}
+
+class _RedPageState extends State<RedPage> {
+  List<String> names = ["a", "b", "c"];
 
   @override
   Widget build(BuildContext context) {
-    return const ColoredBox(color: Colors.red);
+    return const Column(
+      children: [
+        Text("a"),
+        Text("b"),
+        Text("c"),
+      ],
+    );
   }
 }
 
